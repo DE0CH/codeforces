@@ -9,6 +9,7 @@ for i in range(0, t):
     l = list(map(int, input().split()))
     r = list(map(int, input().split()))
     n, k, s = cases[i]
+    print(i)
     assert Multiset(s[:n]) >= Multiset(l)
     assert Multiset(s[n:2*n]) >= Multiset(r)
     assert len(l) == 2*k
