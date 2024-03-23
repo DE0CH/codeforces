@@ -32,16 +32,16 @@ elif x == 0 and y == 0:
             if set(s) >= chars_cand:
                 chars = chars_cand
         assert chars is not None
-    remaining = [1, 1]
-    # print(chars, file=stderr)
-    for m in s:
-        # print(remaining, file=stderr)
-        if m in chars and remaining[axis[m]] > 0:
-            print('H', end='')
-            remaining[axis[m]] -= 1
-        else:
-            print('R', end='')
-    print()
+        remaining = [1, 1]
+        # print(chars, file=stderr)
+        for m in s:
+            # print(remaining, file=stderr)
+            if m in chars and remaining[axis[m]] > 0:
+                print('H', end='')
+                remaining[axis[m]] -= 1
+            else:
+                print('R', end='')
+        print()
 elif x != 0 or y != 0:
     # print('not at origin', file=stderr)
     remaining = [abs(x // 2), abs(y // 2)]
@@ -57,7 +57,7 @@ elif x != 0 or y != 0:
     if y > 0:
         chars.add('N')
     elif y < 0:
-        chars.add('S', 1)
+        chars.add('S')
     else:
         pass
     for m in s:

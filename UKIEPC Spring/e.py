@@ -1,7 +1,7 @@
 def passes(time):
     if time == 0:
         return 0
-    return time // 720 + 1
+    return (time-1) // 720 + 1
 
 t = int(input())
 for _ in range(t):
