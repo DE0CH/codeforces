@@ -1,5 +1,10 @@
 {
     "cSpell.words": [
         "forn"
-    ]
+    ],
+    "files.associations": {
+        "*.tcc": "cpp",
+        "iostream": "cpp",
+        "vector": "cpp"
+    }
 }
