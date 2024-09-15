@@ -1,0 +1,17 @@
+https://codeforces.com/problemset/problem/2007/C
+
+Suppose we are only given one integer, d, we can solve it greedily.
+
+Theorem 1. equivalently we can not only add d, but also subtract d from a number. Let's call this addition or subtraction "moving" an element in the array.
+
+Proof 1. subtracting d is equivalent to adding d to all the other elements in the array
+
+Now for two integers a and b, the problem can be reduced to solving it for one integer d, which is the gcd of a and b.
+
+Theorem 2. The value for which you can add or subtract a number by any combination of moves is a multiple of d.
+
+Proof 2. Bezout's identity. Omitted. Check wikipedia.
+
+You can find the range of an array modulo d by first sorting the array, and then two adjacent elements as the smallest and largest.
+
+Complexity: O(N log N)
