@@ -26,21 +26,23 @@ void dijkstra(ll n, ll s, vector<ll> & d, vector<ll> & p) {
     p.assign(n, -1);
 
     d[s] = 0;
-    set<ipair> q;
-    q.insert({0, s});
+    priority_queue<ipair, vector<ipair>, greater<ipair>> q;
+    q.push({0, s});
     while (!q.empty()) {
-        int v = q.begin()->second;
-        q.erase(q.begin());
+        ll v = q.top().second;
+        ll d_v = q.top().first;
+        q.pop();
+        if (d_v != d[v])
+            continue;
 
         for (auto edge : adj[v]) {
-            int len = edge.first;
-            int to = edge.second;
+            ll len = edge.first;
+            ll to = edge.second;
 
             if (d[v] + len < d[to]) {
-                q.erase({d[to], to});
                 d[to] = d[v] + len;
                 p[to] = v;
-                q.insert({d[to], to});
+                q.push({d[to], to});
             }
         }
     }
@@ -66,8 +68,6 @@ int main() {
     dijkstra(n, 0, d, p);
     vector<ll> path;
     ll element = n-1;
-    dbg(d);
-    dbg(p);
     while (element != 0 && element != -1) {
         path.push_back(element);
         element = p[element];
