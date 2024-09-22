@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
-
+ 
 using namespace std;
-
+ 
 template<typename A, typename B> ostream& operator<<(ostream &os, const pair<A, B> &p) { return os << '(' << p.first << ", " << p.second << ')'; }
 template<typename T_container, typename T = typename enable_if<!is_same<T_container, string>::value, typename T_container::value_type>::type> ostream& operator<<(ostream &os, const T_container &v) { os << '{'; string sep; for (const T &x : v) os << sep << x, sep = ", "; return os << '}'; }
 void dbg_out() { cerr << endl; }
@@ -11,61 +11,51 @@ template<typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cerr
 #else
 #define dbg(...)
 #endif
-
+ 
 #define ll long long
-#define iPair pair<ll, ll>
+#define ipair pair<ll, ll>
 #define INF LONG_LONG_MAX
+#define MAXN 2e5
+ 
+vector<vector<ipair>> adj(2*MAXN);
+vector<bool> horses(MAXN);
+vector<ll> p(2*MAXN);
+vector<ll> s1(2*MAXN);
+vector<ll> s2(2*MAXN);
 
-ll min(ll a, ll b) {
+inline ll min(ll a, ll b) {
     return a < b ? a : b;
 }
-
-ll max(ll a, ll b) {
+ 
+inline ll max(ll a, ll b) {
     return a > b ? a : b;
 }
 
-vector<ll> dijkstra(ll n, vector<vector<iPair>> edges, ll start) {
-    priority_queue<iPair> queue;
-    vector<ll> dist;
-    dist.resize(n, INF);
-    dist.at(start) = 0;
-    queue.push({0, start});
-    while(!queue.empty()) {
-        auto [d, u] = queue.top();
-        queue.pop();
-        for (auto [w, v] : edges[u]) {
-            ll alt = dist[u] + w;
-            if (alt < dist[v]) {
-                dist[v] = alt;
-                queue.push({alt, v});
-            }
-        }
-    }
-    return dist;
-}
+void dijkstra(ll n, ll s, vector<ll> & d, vector<ll> & p) {
+    d.assign(n, INF);
+    p.assign(n, -1);
 
-vector<ll> solve(ll n, vector<vector<iPair>> edges, vector<bool> horses, ll start) {
-    vector<vector<iPair>> new_edges;
-    for (ll i = 0; i < n * 2; i++) {
-        vector<iPair> vv;
-        new_edges.push_back(vv);
-    }
-    for (ll i = 0; i < n; i++) {
-        for (auto [w, u] : edges.at(i)) {
-            new_edges[i].push_back({w, u});
-            new_edges[i + n].push_back({w / 2, u + n});
-            if (horses.at(i)) {
-                new_edges[i].push_back({0, i + n});
+    d[s] = 0;
+    priority_queue<ipair, vector<ipair>, greater<ipair>> q;
+    q.push({0, s});
+    while (!q.empty()) {
+        ll v = q.top().second;
+        ll d_v = q.top().first;
+        q.pop();
+        if (d_v != d[v])
+            continue;
+
+        for (auto edge : adj[v]) {
+            ll len = edge.first;
+            ll to = edge.second;
+
+            if (d[v] + len < d[to]) {
+                d[to] = d[v] + len;
+                p[to] = v;
+                q.push({d[to], to});
             }
         }
     }
-    vector<ll> s = dijkstra(n * 2, new_edges, start);
-    vector<ll> ans;
-    ans.resize(n, 0);
-    for (ll i = 0; i < n; i++) {
-        ans.at(i) = min(s.at(i), s.at(i + n));
-    }
-    return ans;
 }
 
 int main() {
@@ -76,36 +66,30 @@ int main() {
     for (int t = 1; t <= tc; t++) {
         ll n, m, h;
         cin >> n >> m >> h;
-        vector<ll> horses_index;
+        for (ll i = 0; i < n * 2; i++) {
+            adj.at(i).clear();
+        }
         for(ll i = 0; i < h; i++) {
             ll s;
             cin >> s;
             s--;
-            horses_index.push_back(s);
-        }
-        vector<bool> horses;
-        horses.resize(n, false);
-        for (auto i : horses_index) {
-            horses.at(i) = true;
-        }
-        vector<vector<iPair>> edges;
-        for (ll i = 0; i < n; i++) {
-            vector<iPair> vv;
-            edges.push_back(vv);
+            adj.at(s).push_back({0, s + n});
         }
         for (ll i = 0; i < m; i++) {
             ll u, v, w;
             cin >> u >> v >> w;
             u--;
             v--;
-            edges.at(u).push_back({w, v});
-            edges.at(v).push_back({w, u});
+            adj.at(u).push_back({w, v});
+            adj.at(v).push_back({w, u});
+            adj.at(u + n).push_back({w / 2, v + n});
+            adj.at(v + n).push_back({w / 2, u + n});
         }
-        vector<ll> s1 = solve(n, edges, horses, 0);
-        vector<ll> s2 = solve(n, edges, horses, n - 1);
+        dijkstra(2*n, 0, s1, p);
+        dijkstra(2*n, n-1, s2, p);
         ll ans = INF;
         for (ll i = 0; i < n; i++) {
-            ans = min(ans, max(s1.at(i), s2.at(i)));
+            ans = min(ans, max(min(s1.at(i), s1.at(i + n)), min(s2.at(i), s2.at(i + n))));
         }
         if (ans < INF) {
             cout << ans << endl;
