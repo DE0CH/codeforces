@@ -1,19 +1,10 @@
 from sys import stderr
 import heapq
-
-MAXN = 200000
-
-adj = [[] for _ in range(2*MAXN)]
-s1 = [float('inf') for _ in range(2*MAXN)]
-s2 = [float('inf') for _ in range(2*MAXN)]
-p = [-1 for _ in range(2*MAXN)]
-queue = []
-
-
-def dijkstra(n, s, d, p):
-    d.clear()
-    p.clear()
-    queue.clear()
+ 
+def dijkstra(n, s, adj):
+    d = []
+    p = []
+    queue = []
     for i in range(n):
         d.append(float('inf'))
         p.append(-1)
@@ -31,13 +22,13 @@ def dijkstra(n, s, d, p):
                 d[to] = d[v] + len
                 p[to] = v
                 heapq.heappush(queue, (d[to], to))
-
+    return (d, p)
+ 
 T = int(input())
-
+ 
 for _ in range(T):
     n, m, h = map(int, input().split())
-    for i in range(2*n):
-        adj[i].clear()
+    adj = [[] for _ in range(2*n)]
     for i in map(int, input().split()):
         i -= 1
         adj[i].append((0, i+n))
@@ -49,8 +40,8 @@ for _ in range(T):
         adj[v].append((w, u))
         adj[u+n].append((w//2, v+n))
         adj[v+n].append((w//2, u+n))
-    dijkstra(n*2, 0, s1, p)
-    dijkstra(n*2, n-1, s2, p)
+    s1, _ = dijkstra(n*2, 0, adj)
+    s2, _ = dijkstra(n*2, n-1, adj)
     ans = float('inf')
     for i in range(n):
         ans = min(ans, max(min(s1[i], s1[i+n]), min(s2[i], s2[i+n])))
