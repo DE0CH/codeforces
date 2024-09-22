@@ -1,17 +1,9 @@
 import heapq
 
-MAXN = 200000
-
-adj = [[] for _ in range(MAXN)]
-d = [float('inf') for _ in range(MAXN)]
-p = [-1 for _ in range(MAXN)]
-queue = []
-
-# Don't allocate d and p because it is too expensive for multiple test cases
-def dijkstra(n, s, d, p):
-    d.clear()
-    p.clear()
-    queue.clear()
+def dijkstra(n, s, adj):
+    d = []
+    p = []
+    queue = []
     for i in range(n):
         d.append(float('inf'))
         p.append(-1)
@@ -29,11 +21,12 @@ def dijkstra(n, s, d, p):
                 d[to] = d[v] + len
                 p[to] = v
                 heapq.heappush(queue, (d[to], to))
+    return (d, p)
 
+# https://codeforces.com/problemset/problem/20/C
 
 n, m = map(int, input().split())
-for i in range(n):
-    adj[i].clear()
+adj = [[] for _ in range(n)]
 
 for i in range(m):
     u, v, w = map(int, input().split())
@@ -42,7 +35,7 @@ for i in range(m):
     adj[u].append((w, v))
     adj[v].append((w, u))
 
-dijkstra(n, 0, d, p)
+d, p = dijkstra(n, 0, adj)
 
 element = n-1
 path = []
